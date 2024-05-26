@@ -6,7 +6,6 @@ import (
 	authz "github.com/cosmos/cosmos-sdk/x/authz/module"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	"github.com/cosmos/cosmos-sdk/x/capability"
-	"github.com/cosmos/cosmos-sdk/x/crisis"
 	"github.com/cosmos/cosmos-sdk/x/distribution"
 	feegrant "github.com/cosmos/cosmos-sdk/x/feegrant/module"
 	"github.com/cosmos/cosmos-sdk/x/gov"
@@ -37,7 +36,7 @@ var ModuleBasics = []module.AppModuleBasic{
 			upgradeclient.LegacyCancelProposalHandler,
 		},
 	),
-	crisis.AppModuleBasic{},
+	//crisis.AppModuleBasic{},
 	distribution.AppModuleBasic{},
 	feegrant.AppModuleBasic{},
 	mint.AppModuleBasic{},
