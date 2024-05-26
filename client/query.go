@@ -7,14 +7,13 @@ import (
 	"fmt"
 	"strings"
 
-	ctypes "github.com/cometbft/cometbft/rpc/core/types"
+	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankTypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	distTypes "github.com/cosmos/cosmos-sdk/x/distribution/types"
-	transfertypes "github.com/cosmos/ibc-go/v7/modules/apps/transfer/types"
 )
 
 // queryBalanceWithAddress returns the amount of coins in the relayer account with address as input
@@ -43,18 +42,18 @@ func (cc *ChainClient) queryLatestHeight(ctx context.Context) (int64, error) {
 
 // queryDenomTraces returns all the denom traces from a given chain
 // TODO add pagination support
-func (cc *ChainClient) queryDenomTraces(ctx context.Context, offset, limit uint64, height int64) ([]transfertypes.DenomTrace, error) {
-	transfers, err := transfertypes.NewQueryClient(cc).DenomTraces(
-		ctx,
-		&transfertypes.QueryDenomTracesRequest{
-			Pagination: DefaultPageRequest(),
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-	return transfers.DenomTraces, nil
-}
+// func (cc *ChainClient) queryDenomTraces(ctx context.Context, offset, limit uint64, height int64) ([]transfertypes.DenomTrace, error) {
+// 	transfers, err := transfertypes.NewQueryClient(cc).DenomTraces(
+// 		ctx,
+// 		&transfertypes.QueryDenomTracesRequest{
+// 			Pagination: DefaultPageRequest(),
+// 		},
+// 	)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return transfers.DenomTraces, nil
+// }
 
 func (cc *ChainClient) QueryAccount(ctx context.Context, address sdk.AccAddress) (authtypes.AccountI, error) {
 	addr, err := cc.EncodeBech32AccAddr(address)
@@ -78,44 +77,45 @@ func (cc *ChainClient) QueryBalanceWithDenomTraces(ctx context.Context, address 
 	if err != nil {
 		return nil, err
 	}
+	return coins, err
 
-	h, err := cc.queryLatestHeight(ctx)
-	if err != nil {
-		return nil, err
-	}
+	// h, err := cc.queryLatestHeight(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	// TODO: figure out how to handle this
-	// we don't want to expose user to this
-	// so maybe we need a QueryAllDenomTraces function
-	// that will paginate the responses automatically
-	// TODO fix pagination here later
-	dts, err := cc.queryDenomTraces(ctx, 0, 1000, h)
-	if err != nil {
-		return nil, err
-	}
+	// // TODO: figure out how to handle this
+	// // we don't want to expose user to this
+	// // so maybe we need a QueryAllDenomTraces function
+	// // that will paginate the responses automatically
+	// // TODO fix pagination here later
+	// dts, err := cc.queryDenomTraces(ctx, 0, 1000, h)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	if len(dts) == 0 {
-		return coins, nil
-	}
+	// if len(dts) == 0 {
+	// 	return coins, nil
+	// }
 
-	var out sdk.Coins
-	for _, c := range coins {
-		if c.Amount.Equal(sdk.NewInt(0)) {
-			continue
-		}
+	// var out sdk.Coins
+	// for _, c := range coins {
+	// 	if c.Amount.Equal(sdk.NewInt(0)) {
+	// 		continue
+	// 	}
 
-		for i, d := range dts {
-			if c.Denom == d.IBCDenom() {
-				out = append(out, sdk.Coin{Denom: d.GetFullDenomPath(), Amount: c.Amount})
-				break
-			}
+	// 	for i, d := range dts {
+	// 		if c.Denom == d.IBCDenom() {
+	// 			out = append(out, sdk.Coin{Denom: d.GetFullDenomPath(), Amount: c.Amount})
+	// 			break
+	// 		}
 
-			if i == len(dts)-1 {
-				out = append(out, c)
-			}
-		}
-	}
-	return out, nil
+	// 		if i == len(dts)-1 {
+	// 			out = append(out, c)
+	// 		}
+	// 	}
+	// }
+	// return out, nil
 }
 
 func (cc *ChainClient) QueryDelegatorValidators(ctx context.Context, address sdk.AccAddress) ([]string, error) {

@@ -20,8 +20,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/upgrade"
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
-	"github.com/cosmos/ibc-go/v7/modules/apps/transfer"
-	ibc "github.com/cosmos/ibc-go/v7/modules/core"
 )
 
 var (
@@ -47,8 +45,8 @@ var (
 		slashing.AppModuleBasic{},
 		staking.AppModuleBasic{},
 		upgrade.AppModuleBasic{},
-		transfer.AppModuleBasic{},
-		ibc.AppModuleBasic{},
+		//transfer.AppModuleBasic{},
+		// ibc.AppModuleBasic{},
 	}
 )
 
